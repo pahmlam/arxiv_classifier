@@ -1,0 +1,25 @@
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.env
+
+# IDE settings (VS Code, PyCharm, MacOS)
+.vscode/
+.idea/
+.DS_Store
+
+# Large Model Files & Cache
+models/*.pkl
+models/*.joblib
+
+# HuggingFace Cache 
+.cache/
+cache/
+
+# Logs
+*.log

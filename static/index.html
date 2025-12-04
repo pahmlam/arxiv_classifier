@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Paper Classifier</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 600px; max-width: 90%; }
+        h1 { color: #333; text-align: center; margin-bottom: 1.5rem; }
+        textarea { width: 100%; height: 150px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; box-sizing: border-box; }
+        button { background-color: #4CAF50; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 18px; margin-top: 1rem; transition: background 0.3s; }
+        button:hover { background-color: #45a049; }
+        .result { margin-top: 1.5rem; padding: 1rem; background-color: #e8f5e9; border-left: 5px solid #4CAF50; border-radius: 4px; display: none; }
+        .result h3 { margin: 0 0 10px 0; color: #2e7d32; }
+        .loading { text-align: center; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Phân Loại Chủ Đề Bài Báo</h1>
+    <p>Nhập đoạn tóm tắt (abstract) bài báo khoa học vào dưới đây:</p>
+    <textarea id="abstractInput" placeholder="Ví dụ: We present a new method for image classification using Convolutional Neural Networks..."></textarea>
+    <button onclick="predict()">Dự đoán chủ đề</button>
+    
+    <div class="loading" id="loading">Đang phân tích...</div>
+    
+    <div class="result" id="resultBox">
+        <h3>Kết quả: <span id="topicResult"></span></h3>
+        <p><strong>Topic Categories:</strong> Physics, Math, CS, Condo-mat, Astro-ph</p>
+    </div>
+</div>
+
+<script>
+    async function predict() {
+        const text = document.getElementById('abstractInput').value;
+        const resultBox = document.getElementById('resultBox');
+        const topicSpan = document.getElementById('topicResult');
+        const loading = document.getElementById('loading');
+
+        if (!text.trim()) {
+            alert("Vui lòng nhập nội dung abstract!");
+            return;
+        }
+
+        loading.style.display = 'block';
+        resultBox.style.display = 'none';
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ abstract: text })
+            });
+
+            const data = await response.json();
+            
+            loading.style.display = 'none';
+            resultBox.style.display = 'block';
+            topicSpan.innerText = data.topic.toUpperCase();
+        } catch (error) {
+            console.error('Error:', error);
+            loading.style.display = 'none';
+            alert("Có lỗi xảy ra khi dự đoán.");
+        }
+    }
+</script>
+
+</body>
+</html>
